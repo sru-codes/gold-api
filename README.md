@@ -1,6 +1,6 @@
 <div align="center">
 
-# gold-api
+<img src="assets/banner.svg" alt="gold-api — self-hosted gold and USD/INR market data, refreshed every 60 seconds" width="100%" />
 
 **A small, self-hosted market-data API for gold and USD/INR.**
 
@@ -14,6 +14,16 @@ downstream service can consume.
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688.svg)](https://fastapi.tiangolo.com/)
 [![Tests](https://img.shields.io/badge/tests-26%20passing-brightgreen.svg)](tests)
 [![Deploy on Railway](https://img.shields.io/badge/Deploy-Railway-0B0D0E.svg)](https://railway.app/)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Release](https://img.shields.io/badge/release-v1.0.0-f9d34d.svg)](https://github.com/sru-codes/gold-api/releases)
+
+<p>
+  <a href="#6-installation">Installation</a> ·
+  <a href="#10-api-reference">API reference</a> ·
+  <a href="#11-consuming-the-api-how-to-use-it">Usage</a> ·
+  <a href="#13-deployment">Deployment</a> ·
+  <a href="HACKATHON.md">Hackathon</a>
+</p>
 
 </div>
 
@@ -112,33 +122,9 @@ or return a single opaque number. `gold-api` is built to be the opposite:
 
 ## 4. How it works (architecture)
 
-```mermaid
-flowchart LR
-    subgraph Upstream["Upstream providers"]
-        GP["goldprice.dev\nXAU/USD spot + bars"]
-        FF["Frankfurter\nUSD/INR reference FX"]
-        FR["FRED\nmacro (optional)"]
-        GN["GNews\nnews (optional)"]
-    end
-
-    subgraph Service["gold-api (single process)"]
-        SCH["Scheduler\ndefault 60s loop"]
-        ENG["Refresh engine\nper-source cadence + retries"]
-        CACHE[("Disk cache\nCACHE_DIR")]
-        STORE[("Snapshot store\nmemory + disk")]
-        API["FastAPI\nread-only JSON API"]
-    end
-
-    GP --> ENG
-    FF --> ENG
-    FR --> ENG
-    GN --> ENG
-    SCH --> ENG
-    ENG --> CACHE
-    ENG --> STORE
-    STORE --> API
-    API --> CLIENT["Your app / browser"]
-```
+<div align="center">
+  <img src="assets/architecture.svg" alt="Upstream providers feed a scheduled refresh engine that writes to a disk cache and a snapshot store; the FastAPI layer serves read-only JSON to clients." width="100%" />
+</div>
 
 **Request lifecycle**
 
@@ -249,6 +235,11 @@ gold-api/
 │       ├── frankfurter.py     # Frankfurter: USD/INR reference FX
 │       ├── fred.py            # Optional FRED macro observations
 │       └── gnews.py           # Optional GNews headlines
+│
+├── assets/                    # README artwork (self-contained SVG)
+│   ├── banner.svg             # Hero banner at the top of this README
+│   ├── logo.svg               # Square gold "Au" coin logo
+│   └── architecture.svg       # System diagram used in section 4
 │
 ├── scripts/
 │   ├── client_example.py      # Minimal consumer example (how to call the API)

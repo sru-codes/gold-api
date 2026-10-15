@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" width="1200" height="520" role="img" aria-label="gold-api architecture diagram">
+  <title>gold-api architecture</title>
+  <desc>Upstream providers feed a scheduled refresh engine that writes to a disk cache and a snapshot store; the FastAPI layer serves read-only JSON to clients.</desc>
+
+  <defs>
+    <linearGradient id="a-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a0d14"/>
+      <stop offset="1" stop-color="#121a2b"/>
+    </linearGradient>
+    <linearGradient id="a-gold" x1="0" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#fff3c9"/>
+      <stop offset="0.35" stop-color="#f9d34d"/>
+      <stop offset="1" stop-color="#d99f14"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#8ea0bd"/>
+    </marker>
+    <pattern id="a-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity="0.03"/>
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="520" fill="url(#a-bg)"/>
+  <rect width="1200" height="520" fill="url(#a-grid)"/>
+
+  <text x="600" y="54" text-anchor="middle"
+        font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+        font-size="26" font-weight="700" fill="#e8eefc" letter-spacing="0.3">gold-api — request path never touches an upstream</text>
+
+  <!-- Scheduler -->
+  <g>
+    <rect x="300" y="92" width="240" height="66" rx="14" fill="#131c2e" stroke="#f9d34d" stroke-opacity="0.5"/>
+    <text x="420" y="122" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" font-weight="700" fill="#f9d34d">Scheduler</text>
+    <text x="420" y="144" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="14" fill="#8ea0bd">default 60s loop</text>
+  </g>
+  <line x1="420" y1="158" x2="420" y2="196" stroke="#8ea0bd" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Providers -->
+  <g font-family="ui-sans-serif, system-ui, sans-serif">
+    <rect x="60" y="210" width="230" height="240" rx="16" fill="#0f1626" stroke="#ffffff" stroke-opacity="0.10"/>
+    <text x="175" y="242" text-anchor="middle" font-size="16" font-weight="700" fill="#e8eefc">Upstream providers</text>
+    <g font-size="14">
+      <rect x="80" y="260" width="190" height="38" rx="9" fill="#131c2e" stroke="#ffffff" stroke-opacity="0.08"/>
+      <text x="175" y="284" text-anchor="middle" fill="#c9d2e3">goldprice.dev · XAU/USD</text>
+
+      <rect x="80" y="306" width="190" height="38" rx="9" fill="#131c2e" stroke="#ffffff" stroke-opacity="0.08"/>
+      <text x="175" y="330" text-anchor="middle" fill="#c9d2e3">Frankfurter · USD/INR</text>
+
+      <rect x="80" y="352" width="190" height="38" rx="9" fill="#131c2e" stroke="#ffffff" stroke-opacity="0.08"/>
+      <text x="175" y="376" text-anchor="middle" fill="#c9d2e3">FRED · macro (optional)</text>
+
+      <rect x="80" y="398" width="190" height="38" rx="9" fill="#131c2e" stroke="#ffffff" stroke-opacity="0.08"/>
+      <text x="175" y="422" text-anchor="middle" fill="#c9d2e3">GNews · news (optional)</text>
+    </g>
+  </g>
+
+  <line x1="292" y1="330" x2="336" y2="330" stroke="#8ea0bd" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Refresh engine -->
+  <g>
+    <rect x="338" y="210" width="220" height="240" rx="16" fill="#151f34" stroke="#f9d34d" stroke-opacity="0.55"/>
+    <text x="448" y="250" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="700" fill="#f9d34d">Refresh engine</text>
+    <g font-family="ui-sans-serif, system-ui, sans-serif" font-size="13.5" fill="#c9d2e3">
+      <text x="360" y="286">· per-source cadence</text>
+      <text x="360" y="314">· bounded retries + backoff</text>
+      <text x="360" y="342">· strict schema validation</text>
+      <text x="360" y="370">· failure isolation</text>
+      <text x="360" y="398">· derived view builder</text>
+    </g>
+  </g>
+
+  <line x1="560" y1="330" x2="604" y2="330" stroke="#8ea0bd" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Store -->
+  <g>
+    <rect x="606" y="210" width="200" height="112" rx="16" fill="#131c2e" stroke="#ffffff" stroke-opacity="0.12"/>
+    <text x="706" y="252" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="700" fill="#e8eefc">Snapshot store</text>
+    <text x="706" y="280" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" fill="#8ea0bd">memory + atomic disk</text>
+    <text x="706" y="302" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13.5" fill="#8ea0bd">deep-copied reads</text>
+  </g>
+
+  <!-- Cache -->
+  <g>
+    <rect x="606" y="338" width="200" height="112" rx="16" fill="#0f1626" stroke="#ffffff" stroke-opacity="0.10"/>
+    <text x="706" y="380" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="700" fill="#c9d2e3">Disk cache</text>
+    <text x="706" y="404" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#8ea0bd">best-effort fallback</text>
+    <text x="706" y="426" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#8ea0bd">CACHE_DIR</text>
+  </g>
+
+  <line x1="806" y1="266" x2="850" y2="266" stroke="#8ea0bd" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- API -->
+  <g>
+    <rect x="852" y="210" width="180" height="240" rx="16" fill="#151f34" stroke="#f9d34d" stroke-opacity="0.55"/>
+    <text x="942" y="250" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="700" fill="#f9d34d">FastAPI</text>
+    <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" fill="#c9d2e3">
+      <text x="874" y="286">/health</text>
+      <text x="874" y="312">/api/v1/snapshot</text>
+      <text x="874" y="338">/api/v1/gold</text>
+      <text x="874" y="364">/api/v1/fx</text>
+      <text x="874" y="390">/api/v1/bars</text>
+      <text x="874" y="416">…/providers</text>
+    </g>
+  </g>
+
+  <line x1="1034" y1="330" x2="1078" y2="330" stroke="#8ea0bd" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Clients -->
+  <g>
+    <rect x="1080" y="278" width="90" height="104" rx="14" fill="#131c2e" stroke="#f9d34d" stroke-opacity="0.35"/>
+    <text x="1125" y="322" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700" fill="#e8eefc">Your</text>
+    <text x="1125" y="344" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700" fill="#e8eefc">apps</text>
+  </g>
+
+  <text x="600" y="500" text-anchor="middle"
+        font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" fill="#6f80a0">
+    providers are called on a timer, never on the request path · free commercial use of goldprice.dev's keyless tier requires visible attribution
+  </text>
+</svg>
