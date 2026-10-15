@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- README artwork: `assets/banner.svg`, `assets/logo.svg` and an always-rendering
+  `assets/architecture.svg` system diagram (SVG, no external fonts).
+
 ## [1.0.0] - 2026-10-15
 
 ### Added

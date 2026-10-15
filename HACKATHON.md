@@ -1,4 +1,10 @@
+<div align="center">
+
+<img src="assets/logo.svg" alt="gold-api" width="120" height="120" />
+
 # Hackathon context — Hack in Hills '26, Track 03
+
+</div>
 
 This document explains where `gold-api` fits into the **Hack in Hills '26**
 problem statement it was built around, and — just as importantly — what it
