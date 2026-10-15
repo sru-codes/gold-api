@@ -15,8 +15,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app ./app
 
 # Mutable state (provider cache + published snapshot) lives here.
+# Note: no Dockerfile VOLUME directive — Railway rejects it. Attach a
+# Railway Volume mounted at /data instead (see README).
 RUN mkdir -p /data/cache /data/published
-VOLUME ["/data"]
 
 EXPOSE 8000
 
