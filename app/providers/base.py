@@ -8,10 +8,11 @@ import random
 import time
 import urllib.error
 import urllib.request
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Callable, Mapping
+from typing import Any
 
 
 class ProviderError(RuntimeError):
@@ -118,7 +119,7 @@ class JsonHttpClient:
                         payload = json.loads(response.body.decode("utf-8"))
                     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
                         raise ProviderError(self.provider, "invalid_json", "Provider returned invalid JSON") from exc
-                    retrieved_at = datetime.fromtimestamp(now, timezone.utc).isoformat().replace("+00:00", "Z")
+                    retrieved_at = datetime.fromtimestamp(now, UTC).isoformat().replace("+00:00", "Z")
                     cached = {
                         "provider": self.provider,
                         "source_url": public_url,

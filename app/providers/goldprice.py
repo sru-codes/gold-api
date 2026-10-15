@@ -10,7 +10,6 @@ from urllib.parse import urlencode
 
 from .base import JsonHttpClient, ProviderError
 
-
 TROY_OUNCE_GRAMS = Decimal("31.1034768")
 
 

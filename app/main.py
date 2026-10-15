@@ -55,7 +55,7 @@ async def _scheduler() -> None:
             LOGGER.exception("refresh cycle failed")
         try:
             await asyncio.wait_for(STOP.wait(), timeout=max(5, settings.refresh_interval_seconds))
-        except asyncio.TimeoutError:
+        except TimeoutError:
             continue
 
 

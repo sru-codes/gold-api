@@ -76,7 +76,7 @@ class Settings:
         return Path(self.cache_dir)
 
     @classmethod
-    def from_env(cls) -> "Settings":
+    def from_env(cls) -> Settings:
         data_dir = os.getenv("DATA_DIR", "/data")
         return cls(
             refresh_interval_seconds=_env_int("REFRESH_INTERVAL_SECONDS", 60),

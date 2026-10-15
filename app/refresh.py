@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import logging
 import time
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from typing import Any
 
@@ -37,7 +37,7 @@ def _d(value: Decimal) -> str:
 
 
 def _utc_now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class RefreshEngine:
@@ -76,7 +76,7 @@ class RefreshEngine:
                 "symbol": "XAU-USD-SPOT",
                 "price_usd_per_troy_ounce": _d(spot.price_usd_per_troy_ounce),
                 "price_usd_per_gram": _d(spot.price_usd_per_gram),
-                "computed_at_utc": spot.computed_at_utc.astimezone(timezone.utc).isoformat().replace("+00:00", "Z"),
+                "computed_at_utc": spot.computed_at_utc.astimezone(UTC).isoformat().replace("+00:00", "Z"),
                 "is_stale": spot.is_stale,
                 "sources": list(spot.sources),
                 "unit": "troy_ounce",
@@ -91,7 +91,7 @@ class RefreshEngine:
                 "status": "stale" if spot.is_stale else "available",
                 "authentication": "optional API key; keyless is 15-minute delayed",
                 "last_successful_update": spot.retrieved_at_utc,
-                "latest_observation": spot.computed_at_utc.astimezone(timezone.utc).isoformat().replace("+00:00", "Z"),
+                "latest_observation": spot.computed_at_utc.astimezone(UTC).isoformat().replace("+00:00", "Z"),
                 "coverage": "XAU/USD spot, keyless; deeper history with a key",
                 "limitations": "International reference spot, not an exchange settlement or executable price; free commercial use requires visible attribution",
             },
@@ -155,7 +155,7 @@ class RefreshEngine:
                 "count": len(bars),
                 "bars": [
                     {
-                        "bar_start_utc": b.bar_start_utc.astimezone(timezone.utc).isoformat().replace("+00:00", "Z"),
+                        "bar_start_utc": b.bar_start_utc.astimezone(UTC).isoformat().replace("+00:00", "Z"),
                         "open_usd_per_troy_ounce": _d(b.open_usd_per_troy_ounce),
                         "high_usd_per_troy_ounce": _d(b.high_usd_per_troy_ounce),
                         "low_usd_per_troy_ounce": _d(b.low_usd_per_troy_ounce),
@@ -236,7 +236,7 @@ class RefreshEngine:
                     {
                         "title": a.title,
                         "url": a.url,
-                        "published_at_utc": a.published_at_utc.astimezone(timezone.utc).isoformat().replace("+00:00", "Z"),
+                        "published_at_utc": a.published_at_utc.astimezone(UTC).isoformat().replace("+00:00", "Z"),
                         "source": a.source_name,
                         "description": a.description,
                     }
@@ -250,16 +250,17 @@ class RefreshEngine:
     def refresh_all(self, *, force: bool = False) -> None:
         """Run every source whose interval has elapsed (or all when forced)."""
         s = self.settings
-        if force or self._due("gold", s.gold_interval_seconds):
-            self.refresh_gold(); self._mark("gold")
-        if force or self._due("fx", s.fx_interval_seconds):
-            self.refresh_fx(); self._mark("fx")
-        if force or self._due("bars", s.bars_interval_seconds):
-            self.refresh_bars(); self._mark("bars")
-        if force or self._due("macro", s.macro_interval_seconds):
-            self.refresh_macro(); self._mark("macro")
-        if force or self._due("news", s.news_interval_seconds):
-            self.refresh_news(); self._mark("news")
+        plan = (
+            ("gold", s.gold_interval_seconds, self.refresh_gold),
+            ("fx", s.fx_interval_seconds, self.refresh_fx),
+            ("bars", s.bars_interval_seconds, self.refresh_bars),
+            ("macro", s.macro_interval_seconds, self.refresh_macro),
+            ("news", s.news_interval_seconds, self.refresh_news),
+        )
+        for key, interval, refresh in plan:
+            if force or self._due(key, interval):
+                refresh()
+                self._mark(key)
         self.store.mark_cycle()
         self.store.save()
 
