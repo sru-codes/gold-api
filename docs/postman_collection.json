@@ -1,0 +1,88 @@
+{
+  "info": {
+    "name": "gold-api",
+    "description": "Self-hosted gold & USD/INR market-data API. Refreshes every 60 seconds; no API keys required.\n\nSet the `baseUrl` variable to your deployment (default: http://localhost:8000). For a protected deployment, also set `adminToken`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" },
+    { "key": "adminToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "description": "Liveness/readiness. `status` is `starting` until the first cycle completes, then `ok`.",
+        "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+      }
+    },
+    {
+      "name": "Snapshot (everything)",
+      "request": {
+        "method": "GET",
+        "description": "The complete payload: every section plus derived values, provider health and metadata.",
+        "url": { "raw": "{{baseUrl}}/api/v1/snapshot", "host": ["{{baseUrl}}"], "path": ["api", "v1", "snapshot"] }
+      }
+    },
+    {
+      "name": "Gold spot + derived INR/g",
+      "request": {
+        "method": "GET",
+        "description": "XAU/USD spot and the derived gold reference price in INR per gram.",
+        "url": { "raw": "{{baseUrl}}/api/v1/gold", "host": ["{{baseUrl}}"], "path": ["api", "v1", "gold"] }
+      }
+    },
+    {
+      "name": "FX (USD/INR)",
+      "request": {
+        "method": "GET",
+        "description": "USD/INR reference rate with the effective date.",
+        "url": { "raw": "{{baseUrl}}/api/v1/fx", "host": ["{{baseUrl}}"], "path": ["api", "v1", "fx"] }
+      }
+    },
+    {
+      "name": "Daily bars",
+      "request": {
+        "method": "GET",
+        "description": "Closed daily gold bars over the configured window.",
+        "url": { "raw": "{{baseUrl}}/api/v1/bars", "host": ["{{baseUrl}}"], "path": ["api", "v1", "bars"] }
+      }
+    },
+    {
+      "name": "Macro (optional)",
+      "request": {
+        "method": "GET",
+        "description": "FRED series. Empty note unless FRED_API_KEY is configured.",
+        "url": { "raw": "{{baseUrl}}/api/v1/macro", "host": ["{{baseUrl}}"], "path": ["api", "v1", "macro"] }
+      }
+    },
+    {
+      "name": "News (optional)",
+      "request": {
+        "method": "GET",
+        "description": "GNews headlines. Empty note unless GNEWS_API_KEY is configured.",
+        "url": { "raw": "{{baseUrl}}/api/v1/news", "host": ["{{baseUrl}}"], "path": ["api", "v1", "news"] }
+      }
+    },
+    {
+      "name": "Providers",
+      "request": {
+        "method": "GET",
+        "description": "Per-provider status, auth requirement, coverage and known limitations.",
+        "url": { "raw": "{{baseUrl}}/api/v1/providers", "host": ["{{baseUrl}}"], "path": ["api", "v1", "providers"] }
+      }
+    },
+    {
+      "name": "Force refresh",
+      "request": {
+        "method": "POST",
+        "description": "Force an immediate refresh of every source. If ADMIN_TOKEN is set on the server, send the bearer token.",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{adminToken}}", "type": "text" }
+        ],
+        "url": { "raw": "{{baseUrl}}/api/v1/refresh", "host": ["{{baseUrl}}"], "path": ["api", "v1", "refresh"] }
+      }
+    }
+  ]
+}

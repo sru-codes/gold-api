@@ -245,6 +245,9 @@ gold-api/
 │   ├── client_example.py      # Minimal consumer example (how to call the API)
 │   └── smoke_test.py          # Offline one-shot refresh, prints a summary
 │
+├── docs/
+│   └── postman_collection.json  # Import into Postman/Insomnia to call every endpoint
+│
 ├── tests/                     # Hermetic unit tests (no network)
 │   ├── conftest.py            # Makes `app` importable for tests
 │   ├── test_math.py           # Troy-ounce → INR/gram conversion
@@ -260,9 +263,11 @@ gold-api/
 │
 ├── Dockerfile                 # Container image (no VOLUME — Railway rejects it)
 ├── railway.json               # Railway build + deploy (healthcheck at /health)
+├── Makefile                   # make install / run / test / lint / smoke / docker-*
 ├── requirements.txt           # Runtime deps (fastapi, uvicorn)
 ├── requirements-dev.txt       # Dev deps (pytest, ruff)
 ├── pyproject.toml             # pytest + ruff configuration
+├── .editorconfig              # Editor defaults (indent, EOL, trailing space)
 ├── .env.example               # Every environment variable, with defaults
 ├── .dockerignore              # Keeps the image small (excludes tests/docs/.venv)
 ├── .gitignore                 # Ignores .venv, caches, data, .env
@@ -597,6 +602,12 @@ curl -s "$BASE/api/v1/providers" | jq '.providers[].status'
 curl -s "$BASE/api/v1/snapshot"  | jq '.mode'
 ```
 
+### Postman / Insomnia
+
+Import [`docs/postman_collection.json`](docs/postman_collection.json) — it contains
+every endpoint, with `baseUrl` and `adminToken` collection variables. Change
+`baseUrl` to your deployment and you are done.
+
 ### Reading it safely
 
 - Always check `mode` before assuming full data: `PARTIAL`/`DEGRADED` means at
@@ -698,6 +709,21 @@ Run live with auto-reload:
 
 ```bash
 uvicorn app.main:app --reload
+```
+
+### Shortcuts with `make`
+
+If you have `make`, the [Makefile](Makefile) wraps the common tasks:
+
+```bash
+make help          # list every target
+make install       # create .venv and install runtime + dev deps
+make run           # uvicorn with auto-reload on :8000
+make test          # pytest
+make lint          # ruff check .
+make fmt           # ruff check . --fix
+make smoke         # one-shot offline refresh (no server)
+make docker-build  # docker build -t gold-api .
 ```
 
 ### Adding a provider
